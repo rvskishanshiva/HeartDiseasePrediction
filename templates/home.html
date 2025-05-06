@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url({% static 'predict/images/heart.jpg' %});
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+    </style>
+
+</head>
+<body class="bg-gray-100 font-sans"  >
+    <!-- Header Section -->
+    <header class="bg-blue-600 text-white py-6">
+        <div class="container mx-auto text-center">
+            <h1 class="text-3xl font-bold">Heart Disease Prediction</h1>
+            <p class="mt-2">Enter your health metrics to predict heart disease risk.</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-8">
+        <!-- Model Accuracy -->
+        <section class="mb-8 text-center">
+            <h2 class="text-2xl font-semibold mb-4">Model Accuracy</h2>
+            <p class="text-lg">Our machine learning model, trained on a comprehensive dataset, achieves an accuracy of 99.64%. This ensures reliable predictions based on your input health metrics.</p>
+        </section>
+
+        <!-- Prediction Form -->
+        <section class="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Enter Your Details</h2>
+            <form method="POST" class="space-y-4" action="/predict">
+                {% csrf_token %}
+                <!-- Age -->
+                <div>
+                    <label for="id_age" class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" name="Age" id="id_age" min="0" max="150" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.age.value|default_if_none:'' }}">
+                    {% if form.age.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <label for="id_gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                    <select name="Gender" id="id_gender" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="" {% if not form.gender.value %}selected{% endif %}>Select Gender</option>
+                        <option value="1" {% if form.gender.value == '1' %}selected{% endif %}>Male</option>
+                        <option value="0" {% if form.gender.value == '0' %}selected{% endif %}>Female</option>
+                    </select>
+                    {% if form.gender.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.gender.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Heart Rate -->
+                <div>
+                    <label for="id_heart_rate" class="block text-sm font-medium text-gray-700">Heart Rate (bpm)</label>
+                    <input type="number" name="HeartRate" id="id_heart_rate" min="0" max="500" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.heart_rate.value|default_if_none:'' }}">
+                    {% if form.heart_rate.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- Systolic BP -->
+                <div>
+                    <label for="id_systolic_bp" class="block text-sm font-medium text-gray-700">Systolic Blood Pressure (mmHg)</label>
+                    <input type="number" name="SystolicBloodPressure" id="id_systolic_bp" min="0" max="1000" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.systolic_bp.value|default_if_none:'' }}">
+                    {% if form.systolic_bp.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- Diastolic BP -->
+                <div>
+                    <label for="id_diastolic_bp" class="block text-sm font-medium text-gray-700">Diastolic Blood Pressure (mmHg)</label>
+                    <input type="number" name="DiastolicBloodPressure" id="id_diastolic_bp" min="0" max="1000" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.diastolic_bp.value|default_if_none:'' }}">
+                    {% if form.diastolic_bp.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- Blood Sugar -->
+                <div>
+                    <label for="id_blood_sugar" class="block text-sm font-medium text-gray-700">Blood Sugar (mg/dL)</label>
+                    <input type="number" name="BloodSugar" id="id_blood_sugar" min="0" step="0.1" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.blood_sugar.value|default_if_none:'' }}">
+                    {% if form.blood_sugar.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- CK-MB -->
+                <div>
+                    <label for="id_ck_mb" class="block text-sm font-medium text-gray-700">CK-MB (ng/mL)</label>
+                    <input type="number" step="0.0001" name="CK-MB" id="id_ck_mb" min="0" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.ck_mb.value|default_if_none:'' }}">
+                    {% if form.ck_mb.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <!-- Troponin -->
+                <div>
+                    <label for="id_troponin" class="block text-sm font-medium text-gray-700">Troponin (ng/mL)</label>
+                    <input type="number" step="0.0001" name="Troponin" id="id_troponin" min="0" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           value="{{ form.troponin.value|default_if_none:'' }}">
+                    {% if form.troponin.errors %}
+                        <p class="text-red-500 text-sm mt-1">Please enter correct value</p>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Predict</button>
+            </form>
+        </section>
+
+        <!-- Prediction Result -->
+        {% if prediction is not None %}
+            <section class="mt-8 text-center">
+                <h2 class="text-2xl font-semibold mb-4">Prediction Result</h2>
+                <p class="text-lg">
+                    {% if prediction == 1 %}
+                        <span class="text-red-600">Positive: You may be at risk of heart disease.</span>
+                    {% elif prediction == 0 %}
+                        <span class="text-green-600">Negative: Low risk of heart disease.</span>
+                    {% endif %}
+                    <br>
+                </p>
+                <p class="text-sm text-gray-600 mt-2">Note: This prediction is for informational purposes. Consult a healthcare professional for medical advice.</p>
+            </section>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4 text-center">
+        <p>© 2025 Heart Disease Prediction. All rights reserved.</p>
+    </footer>
+</body>
+</html>
